@@ -1,0 +1,1706 @@
+
+<!DOCTYPE html>
+<!--
+GenesisL1 / L1 Coin Faucet (Client-only)
+MIT License
+
+
+Copyright (c) 2026 GenesisL1
+Copyright (c) 2026 L1 Coin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>GenesisL1 | L1coin faucet</title>
+
+  <!-- Primary SEO -->
+  <meta name="description" content="GenesisL1 / L1 Coin faucet (EVM chainId 29). Claim small amounts of $L1 to build and test Web3 + DeSci applications on GenesisL1." />
+  <meta name="keywords" content="GenesisL1,L1 Coin,L1coin,faucet,Web3,DeSci,decentralized science,EVM,chainId 29,ethermint,cosmos sdk,evm faucet,test tokens,smart contract,metamask,rabby" />
+  <meta name="author" content="GenesisL1" />
+  <meta name="application-name" content="GenesisL1 Faucet" />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="theme-color" content="#0084ff" />
+  <meta name="color-scheme" content="light" />
+
+  <!-- Canonical (edit if your faucet URL path differs) -->
+  <link rel="canonical" href="https://l1coin.com/faucet.html" />
+
+  <!-- Web3 identity / verification-style links -->
+  <link rel="me" href="https://genesisl1.com/" />
+  <link rel="me" href="https://l1coin.com/" />
+  <link rel="me" href="https://github.com/GenesisL1" />
+  <link rel="me" href="https://x.com/genesis_L1" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GenesisL1 / L1coin" />
+  <meta property="og:title" content="GenesisL1 | L1 Coin Faucet" />
+  <meta property="og:description" content="Client-only faucet for GenesisL1 (EVM chainId 29). Claim $L1 and build DeSci + Web3 apps." />
+  <meta property="og:url" content="https://l1coin.com/faucet.html" />
+  <meta property="og:locale" content="en_US" />
+  <!-- Replace with your own image if you have a branded OG card -->
+  <meta property="og:image" content="https://raw.githubusercontent.com/cosmos/chain-registry/master/genesisl1/images/l1.png" />
+  <meta property="og:image:alt" content="GenesisL1 / L1 Coin" />
+
+  <!-- Twitter/X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GenesisL1 | L1 Coin Faucet" />
+  <meta name="twitter:description" content="Client-only faucet for GenesisL1 (EVM chainId 29). Claim $L1 and build DeSci + Web3 apps." />
+  <meta name="twitter:site" content="@genesis_L1" />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/cosmos/chain-registry/master/genesisl1/images/l1.png" />
+
+  <!-- Structured data (Web3-friendly, indexable) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://genesisl1.com/#org",
+        "name": "GenesisL1 Decentralized Science",
+        "url": "https://genesisl1.com/",
+        "sameAs": [
+          "https://github.com/GenesisL1",
+          "https://x.com/genesis_L1"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://l1coin.com/#website",
+        "name": "L1coin",
+        "url": "https://l1coin.com/"
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://l1coin.com/faucet.html#app",
+        "name": "GenesisL1 | L1 Coin Faucet",
+        "url": "https://l1coin.com/faucet.html",
+        "applicationCategory": "BlockchainApplication",
+        "operatingSystem": "All",
+        "isAccessibleForFree": true,
+        "inLanguage": "en",
+        "publisher": { "@id": "https://genesisl1.com/#org" },
+        "additionalProperty": [
+          { "@type": "PropertyValue", "name": "EVM Chain ID", "value": "29" },
+          { "@type": "PropertyValue", "name": "Token", "value": "L1" }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --lab-blue: #0084ff;
+      --lab-bg: #eef2f5;
+      --liquid-color: #00d4ff;
+      --ok: #00b894;
+      --err: #d63031;
+      --muted: #99abb9;
+      --glass: rgba(255,255,255,.78);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+    body {
+      background-color: var(--lab-bg);
+      background-image:
+        linear-gradient(rgba(255,255,255,.5) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 2px, transparent 2px);
+      background-size: 100px 100px;
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .ambient-glass {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .station-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 500px;
+      max-width: calc(100vw - 28px);
+    }
+
+    /* Lab glass above panel (tilts only on dispense) */
+    .flask-wrapper {
+      position: relative;
+      width: 180px;
+      height: 220px;
+      z-index: 11;
+      pointer-events: none;
+      transform-origin: 74% 40%;
+      will-change: transform;
+    }
+
+    .flask-wrapper.pouring {
+      animation: pour 1.55s ease-in-out;
+    }
+
+    @keyframes pour {
+      0%   { transform: rotate(0deg); }
+      25%  { transform: rotate(-28deg); }
+      70%  { transform: rotate(-28deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    .flask-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    }
+
+    .condensation {
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .lab-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(30px) contrast(110%);
+      -webkit-backdrop-filter: blur(30px);
+      border: 2px solid #fff;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+      border-radius: 2px;
+      padding: 60px 40px 34px 40px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 12;
+    }
+
+    .serial-number {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: #99abb9;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .subline { font-size: 12px; color: #7f8c8d; }
+
+    .input-zone {
+      margin: 24px 0 10px;
+      position: relative;
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      background: #f8fafb;
+      border: 1px solid #d1d9e0;
+      font-family: 'Geist Mono', monospace;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+      cursor: text;
+    }
+
+    input:focus { border-color: var(--lab-blue); background: #fff; }
+    input[readonly] { cursor: default; }
+
+    /* ===== Add chain buttons ===== */
+    .chain-actions{
+      display: grid;
+      gap: 10px;
+      margin: 10px 0 6px;
+    }
+    .btn-chain{
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 14px;
+      border: 1px solid rgba(0,132,255,0.35);
+      background: linear-gradient(90deg, rgba(0,132,255,0.10), rgba(0,212,255,0.08));
+      color: #2c3e50;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .18s ease;
+      user-select: none;
+    }
+    .btn-chain:hover{
+      border-color: rgba(0,132,255,0.60);
+      background: rgba(255,255,255,0.86);
+      transform: translateY(-1px);
+    }
+    .btn-chain:active{ transform: scale(0.99); }
+    .btn-chain:disabled{
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-chain .pill{
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 4px 8px;
+      border: 1px solid rgba(10,20,40,0.12);
+      background: rgba(255,255,255,0.65);
+      color: #6c7a8f;
+    }
+    .btn-chain.alt{
+      border-color: rgba(10,20,40,0.14);
+      background: rgba(255,255,255,0.45);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .btn-chain.alt:hover{
+      border-color: rgba(0,132,255,0.45);
+      background: rgba(255,255,255,0.86);
+    }
+
+    .gate {
+      margin: 14px 0 16px;
+      text-align: left;
+      border: 1px solid #e7edf3;
+      background: rgba(255,255,255,0.65);
+      padding: 12px;
+    }
+
+    .gate-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: #8ea1b1;
+      border-bottom: 1px solid #e7edf3;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .gate-title { color:#7f93a6; }
+    .gate-meta { color:#7f93a6; text-align:right; }
+
+    .qtext {
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      font-size: 13px;
+      color: #2c3e50;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+
+    .qopts { display: grid; gap: 8px; }
+    .qopt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 10px;
+      border: 1px solid #d1d9e0;
+      background: #f8fafb;
+      transition: all 0.15s;
+      cursor: pointer;
+      user-select: none;
+    }
+    .qopt:hover { border-color: rgba(0,132,255,0.5); background: #fff; }
+    .qopt.sel { border-color: var(--lab-blue); background: #fff; }
+    .qopt input { width: auto; padding: 0; cursor: pointer; }
+
+    .powinfo {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: #7f93a6;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+
+    .powbar {
+      margin-top: 10px;
+      height: 10px;
+      border: 1px solid #d1d9e0;
+      background: #f8fafb;
+      position: relative;
+      overflow: hidden;
+    }
+    .powfill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--liquid-color), var(--lab-blue));
+      transition: width .25s ease;
+    }
+
+    .btn-dispense {
+      width: 100%;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 20px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .btn-dispense:hover { background: var(--lab-blue); }
+    .btn-dispense:active { transform: scale(0.98); }
+    .btn-dispense:disabled { opacity: 0.7; cursor: not-allowed; background: #56626d; transform: none; }
+
+    .btn-secondary {
+      width: 100%;
+      margin-top: 10px;
+      background: transparent;
+      color: #2c3e50;
+      border: 1px solid #d1d9e0;
+      padding: 14px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: rgba(0,132,255,0.5); background: rgba(255,255,255,0.6); }
+
+    .statusline {
+      margin-top: 12px;
+      min-height: 18px;
+      text-align: left;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: pre-wrap;
+    }
+    .statusline.ok { color: var(--ok); }
+    .statusline.err { color: var(--err); }
+
+    #drop-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 18px;
+      gap: 1px;
+      background: #eee;
+      border: 1px solid #eee;
+    }
+    .stat-box { background: white; padding: 15px; text-align: left; }
+    .stat-label {
+      font-size: 10px;
+      color: #99abb9;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .stat-value {
+      font-family: 'Geist Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+    }
+    .processing { animation: pulse 1.5s infinite; }
+
+    /* ===== Wallet picker modal ===== */
+    .modal-overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(10,20,40,0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal{
+      width: min(560px, calc(100vw - 26px));
+      background: var(--glass);
+      border: 1px solid rgba(10,20,40,0.10);
+      box-shadow: 0 18px 60px rgba(10,20,40,0.18);
+      padding: 14px;
+      font-family: 'Geist Mono', monospace;
+    }
+    .modal-head{
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(10,20,40,0.10);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .modal-title{
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #2c3e50;
+    }
+    .modal-close{
+      border: 1px solid rgba(10,20,40,0.12);
+      background: rgba(255,255,255,0.7);
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    .wallet-list{
+      display: grid;
+      gap: 10px;
+    }
+    .wallet-item{
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 12px;
+      border: 1px solid #d1d9e0;
+      background: rgba(255,255,255,0.75);
+      padding: 12px;
+      cursor:pointer;
+      transition: all .15s;
+    }
+    .wallet-item:hover{
+      border-color: rgba(0,132,255,0.5);
+      background: #fff;
+      transform: translateY(-1px);
+    }
+    .wallet-item .name{
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #2c3e50;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .wallet-item .meta{
+      font-size: 11px;
+      color: #7f93a6;
+      text-align: right;
+      overflow-wrap:anywhere;
+    }
+    .wallet-hint{
+      margin-top: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: #6c7a8f;
+      line-height: 1.35;
+    }
+    .wallet-hint b{ color:#2c3e50; }
+
+    /* ===== Footer + License ===== */
+    .page-footer{
+      position: fixed;
+      left: 0; right: 0;
+      bottom: 10px;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .footer-inner{
+      pointer-events: auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(10,20,40,0.10);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: #6c7a8f;
+      max-width: min(980px, calc(100vw - 28px));
+    }
+    .footer-link{
+      color: #2c3e50;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(44,62,80,0.35);
+    }
+    .footer-link:hover{
+      color: var(--lab-blue);
+      border-bottom-color: rgba(0,132,255,0.7);
+    }
+    .footer-sep{ color: #b7c3cf; }
+
+    .license{
+      position: fixed;
+      left: 14px; right: 14px;
+      bottom: 54px;
+      z-index: 60;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(10,20,40,0.12);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 10px 12px;
+      font-family: 'Geist Mono', monospace;
+      color: #2c3e50;
+      box-shadow: 0 18px 60px rgba(10,20,40,0.12);
+      max-height: 60vh;
+      overflow: auto;
+    }
+    .license:not([open]){ display:none; }
+    .license summary{
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      user-select: none;
+    }
+    .license pre{
+      margin-top: 10px;
+      font-size: 11px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      color: #445566;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient-glass">
+    <svg style="position:absolute; left:10%; bottom:10%; width:200px; opacity:0.1" viewBox="0 0 100 100">
+      <path d="M30,10 L30,90 L70,90 L70,10" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="30" y="50" width="40" height="40" fill="rgba(0,132,255,0.2)"/>
+    </svg>
+    <svg style="position:absolute; right:15%; top:10%; width:100px; opacity:0.1" viewBox="0 0 100 100">
+      <path d="M40,10 L40,80 Q40,90 50,90 Q60,90 60,80 L60,10" fill="none" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <canvas id="drop-canvas"></canvas>
+
+  <div class="station-container">
+    <div class="flask-wrapper" id="flaskWrap">
+      <div class="condensation"></div>
+      <svg class="flask-svg" viewBox="0 0 200 250">
+        <path id="flask-liquid-path" d="M100,100 L50,220 Q50,230 60,230 L140,230 Q150,230 150,220 Z" fill="var(--liquid-color)" opacity="0.6"/>
+        <path d="M85,20 L85,60 L45,220 Q40,240 60,240 L140,240 Q160,240 155,220 L115,60 L115,20"
+              fill="none" stroke="#2c3e50" stroke-width="3"/>
+        <line x1="90" y1="180" x2="110" y1="180" stroke="#2c3e50" stroke-width="1"/>
+        <line x1="90" y1="140" x2="110" y2="140" stroke="#2c3e50" stroke-width="1"/>
+        <line x1="90" y1="100" x2="110" y2="100" stroke="#2c3e50" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="lab-panel">
+      <div class="serial-number" id="serial">GENESISL1 // DESCI // WEB3</div>
+      <h1>$L1 COIN FAUCET</h1>
+      <p class="subline">DECENTRALIZED SCIENCE UTILITY TOKEN</p>
+
+      <div class="input-zone">
+        <input type="text" id="walletAddr" placeholder="CONNECT WALLET" readonly>
+      </div>
+
+      <!-- ✅ NEW: Add chain buttons -->
+      <div class="chain-actions" aria-label="Add network">
+        <button class="btn-chain" id="addChainBtn" type="button">
+          Add GenesisL1 to Wallet <span class="pill">chainId 29</span>
+        </button>
+
+        <a class="btn-chain alt" href="https://chainlist.org/chain/29" target="_blank" rel="noopener noreferrer">
+          Add GenesisL1 to wallet via ChainList.org
+        </a>
+      </div>
+
+      <div class="gate" id="quizGate" style="display:none;">
+        <div class="gate-head">
+          <div class="gate-title">QUIZ_GATE</div>
+          <div class="gate-meta" id="quizMeta">Q — / —</div>
+        </div>
+        <div class="qtext" id="qText">—</div>
+        <div class="qopts" id="qOpts"></div>
+      </div>
+
+      <div class="gate" id="powGate" style="display:none;">
+        <div class="gate-head">
+          <div class="gate-title">POW_CAPTCHA</div>
+          <div class="gate-meta" id="powMeta">—</div>
+        </div>
+        <div class="powinfo" id="powInfo">—</div>
+        <div class="powbar"><div class="powfill" id="powFill"></div></div>
+      </div>
+
+      <button class="btn-dispense" id="mainBtn">Connect Wallet</button>
+      <button class="btn-secondary" id="resetBtn" style="display:none;">Reset</button>
+
+      <div class="statusline" id="statusLine"></div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-label">NETWORK_ID</span>
+          <span class="stat-value" id="netid-val">29</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">LAST_BLOCK</span>
+          <span class="stat-value" id="block-val">—</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">FAUCET_BALANCE</span>
+          <span class="stat-value" id="faucet-val">—</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">CLAIM_AMOUNT</span>
+          <span class="stat-value" id="claim-val">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wallet picker modal -->
+  <div class="modal-overlay" id="walletModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Select Wallet">
+      <div class="modal-head">
+        <div class="modal-title" id="walletModalTitle">Select EVM Wallet</div>
+        <button class="modal-close" id="walletClose" type="button">Close</button>
+      </div>
+      <div class="wallet-list" id="walletList"></div>
+      <div class="wallet-hint" id="walletHint">
+        <b>Tip:</b> If clicking connect opens Brave onboarding, pick <b>MetaMask</b> or <b>Rabby</b> here.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer + MIT License + GitHub link -->
+  <footer class="page-footer" aria-label="Footer">
+    <div class="footer-inner">
+      <span>© 2026 GenesisL1 · L1 Coin</span>
+      <span class="footer-sep">·</span>
+      <a class="footer-link" href="https://github.com/GenesisL1" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <span class="footer-sep">·</span>
+      <a class="footer-link" href="#" id="openLicense">MIT License</a>
+    </div>
+  </footer>
+
+  <details class="license" id="mitLicenseDetails">
+    <summary>MIT License — GenesisL1 / L1 Coin Faucet (click to close)</summary>
+    <pre>MIT License
+
+
+Copyright (c) 2026 GenesisL1
+Copyright (c) 2026 L1 Coin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</pre>
+  </details>
+
+  <!-- Ethers v6 UMD (same approach as your working wL1 snippet) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+
+  <script>
+  (function () {
+    // ===================== CONFIG =====================
+    const EXPECTED_CHAIN_ID = 29;
+    const EXPECTED_CHAIN_HEX = "0x1d";
+    const FAUCET_ADDRESS = "0x2C19Eed4A8F6379b84c22B89b3Fa734e29C4630C"; // <<< SET THIS
+    const CLAIM_GAS_LIMIT = 650000n; // bypass estimateGas problems
+
+    // public RPC for default-load stats (no wallet needed)
+    const PUBLIC_RPC_URL = "https://rpc.genesisl1.org";
+    const EXPLORER_URL = "https://explorer.genesisl1.org";
+    // ==================================================
+
+    const ABI = [
+      "function paused() view returns (bool)",
+      "function faucetBalance() view returns (uint256)",
+      "function claimAmountWei() view returns (uint256)",
+      "function powDifficultyBits() view returns (uint8)",
+      "function maxChallengeAgeBlocks() view returns (uint8)",
+      "function hasClaimed(address) view returns (bool)",
+      "function questionCount() view returns (uint256)",
+      "function checkAnswer(uint256,uint8) view returns (bool)",
+      "function validateAll(uint8[] answers) view returns (bool)",
+      "function getChallenge(address,uint256) view returns (bytes32)",
+      "function isValidPoW(address,uint256,uint64) view returns (bool)",
+      "function claim(uint8[] answers,uint256 challengeBlock,uint64 powNonce)"
+    ];
+
+    const IFACE_Q5   = new ethers.Interface(["function getQuestion(uint256) view returns (string,string,string,string,string)"]);
+    const IFACE_QARR = new ethers.Interface(["function getQuestion(uint256) view returns (string,string[4])"]);
+
+    // ===================== UI =====================
+    const $ = (id) => document.getElementById(id);
+
+    const mainBtn = $("mainBtn");
+    const resetBtn = $("resetBtn");
+    const addChainBtn = $("addChainBtn");
+
+    const statusLine = $("statusLine");
+    const walletInput = $("walletAddr");
+
+    const quizGate = $("quizGate");
+    const quizMeta = $("quizMeta");
+    const qText = $("qText");
+    const qOpts = $("qOpts");
+
+    const powGate = $("powGate");
+    const powMeta = $("powMeta");
+    const powInfo = $("powInfo");
+    const powFill = $("powFill");
+
+    const flaskWrap = $("flaskWrap");
+    const liquidPath = $("flask-liquid-path");
+
+    const netidEl = $("netid-val");
+    const blockEl = $("block-val");
+    const faucetEl = $("faucet-val");
+    const claimEl  = $("claim-val");
+
+    const walletModal = $("walletModal");
+    const walletList = $("walletList");
+    const walletClose = $("walletClose");
+    const walletModalTitle = $("walletModalTitle");
+    const walletHint = $("walletHint");
+
+    function setStatus(msg, kind) {
+      statusLine.className = "statusline" + (kind ? (" " + kind) : "");
+      statusLine.textContent = msg || "";
+    }
+    function setMain(text, disabled, processing) {
+      mainBtn.textContent = text;
+      mainBtn.disabled = !!disabled;
+      mainBtn.classList.toggle("processing", !!processing);
+    }
+    function showReset(show) { resetBtn.style.display = show ? "block" : "none"; }
+    function showQuiz(show) { quizGate.style.display = show ? "block" : "none"; }
+    function showPow(show) { powGate.style.display = show ? "block" : "none"; }
+    function openModal(){ walletModal.style.display = "flex"; }
+    function closeModal(){ walletModal.style.display = "none"; }
+
+    walletClose.onclick = closeModal;
+    walletModal.addEventListener("click", (e) => {
+      if (e.target === walletModal) closeModal();
+    });
+
+    // ===================== Drops FX (few only) =====================
+    const canvas = $("drop-canvas");
+    const ctx = canvas.getContext("2d");
+    let width, height;
+    let particles = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    class Drop {
+      constructor(x, y, heavy) {
+        this.x = x; this.y = y;
+        this.radius = heavy ? (Math.random()*1.8 + 2.6) : (Math.random()*2.4 + 0.8);
+        this.vy = heavy ? (Math.random()*1.6 + 3.6) : (Math.random()*1.6 + 0.9);
+        this.vx = (Math.random() - 0.5) * (heavy ? 1.0 : 0.8);
+        this.heavy = heavy;
+      }
+      update() { this.y += this.vy; this.x += this.vx; this.vy += 0.16; return this.y <= height; }
+      draw() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+        ctx.fillStyle = this.heavy ? "rgba(0,212,255,0.95)" : "rgba(255,255,255,0.55)";
+        ctx.fill();
+        ctx.beginPath(); ctx.arc(this.x - this.radius*0.3, this.y - this.radius*0.3, this.radius*0.22, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(255,255,255,0.75)";
+        ctx.fill();
+      }
+    }
+
+    function animateDrops() {
+      ctx.clearRect(0,0,width,height);
+      if (Math.random() > 0.97) particles.push(new Drop(Math.random()*width, -10, false));
+      particles = particles.filter(p => { const alive = p.update(); if (alive) p.draw(); return alive; });
+      requestAnimationFrame(animateDrops);
+    }
+    animateDrops();
+
+    let pourTimeouts = [];
+    function clearPourTimeouts() { pourTimeouts.forEach(t => clearTimeout(t)); pourTimeouts = []; }
+    function spawnPourDrop() {
+      const rect = flaskWrap.getBoundingClientRect();
+      const x = rect.left + rect.width * 0.79;
+      const y = rect.top  + rect.height * 0.46;
+      particles.push(new Drop(x, y, true));
+    }
+    function startPourFX() {
+      clearPourTimeouts();
+      flaskWrap.classList.add("pouring");
+      [260, 380, 520, 680].forEach(ms => pourTimeouts.push(setTimeout(spawnPourDrop, ms)));
+      pourTimeouts.push(setTimeout(() => flaskWrap.classList.remove("pouring"), 1600));
+    }
+    function stopPourFX() { clearPourTimeouts(); flaskWrap.classList.remove("pouring"); }
+
+    // ===================== Provider discovery (EIP-6963 + window.ethereum.providers) =====================
+    const announced = [];
+    const seen = new Set();
+
+    window.addEventListener("eip6963:announceProvider", (ev) => {
+      const d = ev.detail || {};
+      const p = d.provider;
+      if (!p || seen.has(p)) return;
+      seen.add(p);
+      announced.push({ provider: p, info: d.info || {} });
+    });
+
+    // request announcements ASAP (but does not open any wallet popup)
+    window.dispatchEvent(new Event("eip6963:requestProvider"));
+
+    function lower(s){ return String(s || "").toLowerCase(); }
+
+    function guessName(entry){
+      const p = entry.provider;
+      const info = entry.info || {};
+      const rdns = lower(info.rdns);
+      const nm = lower(info.name);
+
+      if (p && p.isMetaMask) return "MetaMask";
+      if (p && p.isRabby) return "Rabby";
+      if (p && p.isCoinbaseWallet) return "Coinbase Wallet";
+      if (p && p.isBraveWallet) return "Brave Wallet";
+
+      if (nm.includes("metamask") || rdns.includes("io.metamask")) return "MetaMask";
+      if (nm.includes("rabby") || rdns.includes("io.rabby")) return "Rabby";
+      if (nm.includes("coinbase") || rdns.includes("com.coinbase")) return "Coinbase Wallet";
+      if (nm.includes("brave") || rdns.includes("com.brave")) return "Brave Wallet";
+      if (nm.includes("keplr") || rdns.includes("keplr")) return "Keplr";
+
+      return info.name ? info.name : "Injected Wallet";
+    }
+
+    function isKeplr(entry){
+      const nm = lower(guessName(entry));
+      return nm.includes("keplr") || entry.provider?.isKeplr || entry.provider?._isKeplr;
+    }
+
+    function prio(name){
+      const n = lower(name);
+      if (n.includes("metamask")) return 0;
+      if (n.includes("rabby")) return 1;
+      if (n.includes("coinbase")) return 2;
+      if (n.includes("brave")) return 3;
+      return 4;
+    }
+
+    function getAllProviderEntries(){
+      const out = [];
+
+      // EIP-6963 providers first
+      for (const e of announced) out.push(e);
+
+      // window.ethereum.providers (multi-wallet injection)
+      const eth = window.ethereum;
+      if (eth) {
+        if (Array.isArray(eth.providers) && eth.providers.length) {
+          for (const p of eth.providers) out.push({ provider: p, info: { name: "Injected" } });
+        } else {
+          out.push({ provider: eth, info: { name: "Injected" } });
+        }
+      }
+
+      // de-dupe by object identity
+      const uniq = [];
+      const seenP = new Set();
+      for (const e of out) {
+        if (!e?.provider || seenP.has(e.provider)) continue;
+        seenP.add(e.provider);
+        uniq.push(e);
+      }
+
+      // keep only EIP-1193-looking providers
+      return uniq.filter(e => typeof e.provider?.request === "function");
+    }
+
+    function buildWalletPickerEntries(){
+      const all = getAllProviderEntries()
+        .map(e => ({...e, label: guessName(e)}))
+        .filter(e => !isKeplr(e)); // Keplr excluded
+
+      all.sort((a,b)=> prio(a.label) - prio(b.label));
+      return all;
+    }
+
+    // ===================== Faucet state =====================
+    const STAGE = { DISCONNECTED:0, NEED_SWITCH:1, QUIZ:2, POW_READY:3, POW_MINING:4, READY_CLAIM:5, DISPENSING:6, CLAIMED:7 };
+    let stage = STAGE.DISCONNECTED;
+
+    let eip1193 = null;   // chosen provider
+    let provider = null;
+    let signer = null;
+    let account = null;
+    let faucet = null;
+    let faucetAddr = null;
+
+    let totalQ = 0;
+    let curQ = 0;
+    let answers = [];
+    let selected = null;
+
+    let powWorker = null;
+    let powResult = null;
+    let powPulse = 0;
+
+    let statsTimer = null;
+    let initialFaucetBal = null;
+
+    // public stats objects/timer (rpc.genesisl1.org)
+    let publicProvider = null;
+    let publicFaucet = null;
+    let publicStatsTimer = null;
+
+    function stopPow(terminate){
+      if (powWorker && terminate) powWorker.terminate();
+      powWorker = null;
+    }
+
+    // ===================== Add chain (wallet_addEthereumChain) =====================
+    function genesisChainParams(){
+      return {
+        chainId: EXPECTED_CHAIN_HEX, // 0x1d
+        chainName: "GenesisL1",
+        nativeCurrency: { name: "L1 Coin", symbol: "L1", decimals: 18 },
+        rpcUrls: [PUBLIC_RPC_URL],
+        blockExplorerUrls: [EXPLORER_URL]
+      };
+    }
+
+    function niceErr(e){
+      const msg = e?.shortMessage || e?.message || String(e);
+      const code = e?.code;
+      return (code !== undefined && code !== null) ? `${msg} (code=${code})` : msg;
+    }
+
+    async function addChainWithProvider(p, label){
+      try{
+        addChainBtn.disabled = true;
+        setStatus(`Adding GenesisL1 to ${label}…`, "");
+        await p.request({ method: "wallet_addEthereumChain", params: [genesisChainParams()] });
+
+        // Try switching right after add (harmless if already on it)
+        try { await p.request({ method: "wallet_switchEthereumChain", params: [{ chainId: EXPECTED_CHAIN_HEX }] }); } catch(_) {}
+
+        setStatus(`GenesisL1 added ✅ (${label}). You can now connect and claim.`, "ok");
+      }catch(e){
+        // If user rejected, show clean message
+        setStatus("ADD_CHAIN_FAIL: " + niceErr(e), "err");
+      }finally{
+        addChainBtn.disabled = false;
+      }
+    }
+
+    async function showWalletChooserAndAddChain(){
+      if (location.protocol === "file:") {
+        setStatus("OPEN_ERROR: Serve via http(s), not file://", "err");
+        return;
+      }
+      const entries = buildWalletPickerEntries();
+      walletList.innerHTML = "";
+
+      if (!entries.length) {
+        setStatus("NO_EVM_WALLET: Install MetaMask or Rabby.", "err");
+        return;
+      }
+
+      walletModalTitle.textContent = "Select wallet to add GenesisL1";
+      walletHint.innerHTML = "<b>Tip:</b> Choose <b>MetaMask</b> or <b>Rabby</b>. This will prompt to add GenesisL1 network.";
+
+      entries.forEach((e) => {
+        const btn = document.createElement("div");
+        btn.className = "wallet-item";
+        const rdns = e.info && e.info.rdns ? e.info.rdns : "—";
+        btn.innerHTML = `
+          <div>
+            <div class="name">${escapeHtml(e.label)}</div>
+            <div class="meta">rdns: ${escapeHtml(rdns)}</div>
+          </div>
+          <div class="meta">tap to add</div>
+        `;
+        btn.onclick = async () => {
+          closeModal();
+          await addChainWithProvider(e.provider, e.label);
+        };
+        walletList.appendChild(btn);
+      });
+
+      openModal();
+      setStatus("Select wallet provider to add GenesisL1 network.", "");
+    }
+
+    // ===================== Stage UI =====================
+    function setStage(s) {
+      stage = s;
+      if (s === STAGE.DISCONNECTED) {
+        showQuiz(false); showPow(false); showReset(false);
+        walletInput.value = "";
+        walletInput.placeholder = "CONNECT WALLET";
+        setMain("Connect Wallet", false, false);
+        setStatus("Select MetaMask/Rabby/etc. (Keplr excluded).", "");
+        netidEl.textContent = String(EXPECTED_CHAIN_ID);
+
+        blockEl.textContent = "—";
+        faucetEl.textContent = "—";
+        claimEl.textContent = "—";
+
+        powFill.style.width = "0%";
+        powInfo.textContent = "—";
+        powMeta.textContent = "—";
+        stopPow(true);
+        stopPourFX();
+
+        if (statsTimer) { clearInterval(statsTimer); statsTimer = null; }
+
+        startPublicStats(); // default-load stats
+        return;
+      }
+      if (s === STAGE.NEED_SWITCH) {
+        stopPublicStats();
+        showQuiz(false); showPow(false); showReset(true);
+        setMain("Switch Network", false, false);
+        return;
+      }
+      if (s === STAGE.QUIZ) {
+        stopPublicStats();
+        showQuiz(true); showPow(false); showReset(true);
+        setMain("Submit Answer", false, false);
+        return;
+      }
+      if (s === STAGE.POW_READY) {
+        stopPublicStats();
+        showQuiz(false); showPow(true); showReset(true);
+        setMain("Compute PoW", false, false);
+        return;
+      }
+      if (s === STAGE.POW_MINING) {
+        stopPublicStats();
+        showQuiz(false); showPow(true); showReset(true);
+        setMain("Synthesizing Proof…", true, true);
+        return;
+      }
+      if (s === STAGE.READY_CLAIM) {
+        stopPublicStats();
+        showQuiz(false); showPow(true); showReset(true);
+        setMain("Execute Dispense", false, false);
+        return;
+      }
+      if (s === STAGE.DISPENSING) {
+        stopPublicStats();
+        showQuiz(false); showPow(true); showReset(true);
+        setMain("Dispensing…", true, true);
+        return;
+      }
+      if (s === STAGE.CLAIMED) {
+        stopPublicStats();
+        showQuiz(false); showPow(false); showReset(true);
+        setMain("SUCCESS: TRANSFERRED", true, false);
+        return;
+      }
+    }
+
+    function updateFaucetBalanceUI(balanceWei) {
+      const balL1 = parseFloat(ethers.formatEther(balanceWei));
+      if (initialFaucetBal === null) initialFaucetBal = Math.max(balL1, 0.0001);
+      faucetEl.textContent = balL1.toFixed(4) + " L1";
+
+      const ratio = Math.max(0, Math.min(1, balL1 / initialFaucetBal));
+      const y = 18 * (1 - ratio);
+      liquidPath.setAttribute("transform", `translate(0, ${y.toFixed(2)})`);
+    }
+
+    async function refreshChainStats() {
+      if (!provider || !faucet) return;
+      const net = await provider.getNetwork();
+      netidEl.textContent = String(net.chainId);
+
+      const [block, bal, amt] = await Promise.all([
+        provider.getBlockNumber(),
+        faucet.faucetBalance(),
+        faucet.claimAmountWei()
+      ]);
+
+      blockEl.textContent = String(block);
+      updateFaucetBalanceUI(bal);
+      claimEl.textContent = ethers.formatEther(amt) + " L1";
+    }
+
+    // ===================== Public stats (rpc.genesisl1.org) =====================
+    function ensurePublic() {
+      if (!ethers.isAddress(FAUCET_ADDRESS)) return false;
+      if (!publicProvider) publicProvider = new ethers.JsonRpcProvider(PUBLIC_RPC_URL);
+      if (!faucetAddr) faucetAddr = ethers.getAddress(FAUCET_ADDRESS);
+      if (!publicFaucet) publicFaucet = new ethers.Contract(faucetAddr, ABI, publicProvider);
+      return true;
+    }
+
+    async function refreshPublicStats() {
+      if (!ensurePublic()) return;
+      try {
+        const [block, bal, amt] = await Promise.all([
+          publicProvider.getBlockNumber(),
+          publicFaucet.faucetBalance(),
+          publicFaucet.claimAmountWei()
+        ]);
+        blockEl.textContent = String(block);
+        updateFaucetBalanceUI(bal);
+        claimEl.textContent = ethers.formatEther(amt) + " L1";
+      } catch (_) {
+        // silent
+      }
+    }
+
+    function startPublicStats() {
+      if (!ensurePublic()) return;
+      if (publicStatsTimer) return;
+      refreshPublicStats().catch(()=>{});
+      publicStatsTimer = setInterval(() => refreshPublicStats().catch(()=>{}), 6000);
+    }
+
+    function stopPublicStats() {
+      if (publicStatsTimer) clearInterval(publicStatsTimer);
+      publicStatsTimer = null;
+    }
+
+    // ===================== Faucet questions =====================
+    async function getQuestionDecoded(i) {
+      const data = IFACE_Q5.encodeFunctionData("getQuestion", [i]);
+      const raw = await provider.call({ to: faucetAddr, data });
+      try {
+        const out = IFACE_Q5.decodeFunctionResult("getQuestion", raw);
+        return { text: out[0], options: [out[1], out[2], out[3], out[4]] };
+      } catch (_) {
+        const out = IFACE_QARR.decodeFunctionResult("getQuestion", raw);
+        return { text: out[0], options: [out[1][0], out[1][1], out[1][2], out[1][3]] };
+      }
+    }
+
+    function renderOptions(opts) {
+      qOpts.innerHTML = "";
+      selected = null;
+      opts.forEach((t, idx) => {
+        const row = document.createElement("div");
+        row.className = "qopt";
+        row.innerHTML = `<input type="radio" name="qopt" value="${idx}"><div>${t}</div>`;
+        row.addEventListener("click", () => {
+          selected = idx;
+          qOpts.querySelectorAll(".qopt").forEach(el => el.classList.remove("sel"));
+          row.classList.add("sel");
+          row.querySelector("input").checked = true;
+        });
+        qOpts.appendChild(row);
+      });
+    }
+
+    async function loadQuestion(i) {
+      curQ = i;
+      quizMeta.textContent = `Q ${i+1} / ${totalQ}`;
+      const q = await getQuestionDecoded(i);
+      qText.textContent = q.text;
+      renderOptions(q.options);
+    }
+
+    // ===================== PoW worker =====================
+    function makePowWorker(){
+      const code = `
+        importScripts("https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js");
+        self.onmessage = (e) => {
+          const { challenge, difficultyBits, startNonce } = e.data;
+          const ch = ethers.getBytes(challenge);
+          const diff = BigInt(difficultyBits);
+          const target = (1n << (256n - diff)) - 1n;
+
+          let nonce = BigInt(startNonce || 0);
+          let tries = 0;
+
+          while (true) {
+            const nonceHex = ethers.toBeHex(nonce, 8);
+            const data = ethers.concat([ch, ethers.getBytes(nonceHex)]);
+            const h = ethers.keccak256(data);
+
+            if (BigInt(h) <= target) {
+              self.postMessage({ found: true, nonce: nonce.toString(), hash: h, tries });
+              return;
+            }
+
+            nonce++;
+            tries++;
+
+            if (tries % 25000 === 0) {
+              self.postMessage({ progress: true, tries, nonce: nonce.toString() });
+            }
+          }
+        };
+      `;
+      return new Worker(URL.createObjectURL(new Blob([code], { type:"text/javascript" })));
+    }
+
+    async function pickFreshChallenge(){
+      const [diffBits, maxAge] = await Promise.all([
+        faucet.powDifficultyBits(),
+        faucet.maxChallengeAgeBlocks()
+      ]);
+
+      let cur = await provider.getBlockNumber();
+      let candidate = Math.max(0, cur - 2);
+
+      for (let t=0;t<8;t++){
+        try{
+          const challenge = await faucet.getChallenge(account, candidate);
+          return { challengeBlock: candidate, challenge, diffBits: Number(diffBits), maxAge: Number(maxAge) };
+        }catch{
+          candidate = Math.max(0, candidate - 1);
+        }
+      }
+      throw new Error("CHALLENGE_FETCH_FAILED");
+    }
+
+    // ===================== Wallet chooser + connect =====================
+    function escapeHtml(s){
+      return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+
+    async function showWalletChooserAndConnect(){
+      stopPublicStats();
+
+      if (location.protocol === "file:") {
+        setStatus("OPEN_ERROR: Serve via http(s), not file://", "err");
+        return;
+      }
+      if (!ethers.isAddress(FAUCET_ADDRESS)) {
+        setStatus("CONFIG_ERROR: Set FAUCET_ADDRESS (0x…)", "err");
+        return;
+      }
+
+      const entries = buildWalletPickerEntries();
+      walletList.innerHTML = "";
+
+      if (!entries.length) {
+        setStatus("NO_EVM_WALLET: Install MetaMask or Rabby.", "err");
+        return;
+      }
+
+      walletModalTitle.textContent = "Select EVM Wallet";
+      walletHint.innerHTML = "<b>Tip:</b> If clicking connect opens Brave onboarding, pick <b>MetaMask</b> or <b>Rabby</b> here.";
+
+      entries.forEach((e) => {
+        const btn = document.createElement("div");
+        btn.className = "wallet-item";
+        const rdns = e.info && e.info.rdns ? e.info.rdns : "—";
+        btn.innerHTML = `
+          <div>
+            <div class="name">${escapeHtml(e.label)}</div>
+            <div class="meta">rdns: ${escapeHtml(rdns)}</div>
+          </div>
+          <div class="meta">tap to use</div>
+        `;
+        btn.onclick = async () => {
+          closeModal();
+          await connectWithProvider(e.provider, e.label);
+        };
+        walletList.appendChild(btn);
+      });
+
+      openModal();
+      setStatus("Select wallet provider (MetaMask recommended).", "");
+    }
+
+    async function connectWithProvider(p, label){
+      setMain("CONNECTING…", true, true);
+      setStatus("Connecting: " + label + "…", "");
+
+      try{
+        faucetAddr = ethers.getAddress(FAUCET_ADDRESS);
+        eip1193 = p;
+
+        provider = new ethers.BrowserProvider(eip1193);
+        await provider.send("eth_requestAccounts", []);
+
+        signer = await provider.getSigner();
+        account = await signer.getAddress();
+        walletInput.value = account;
+
+        const net = await provider.getNetwork();
+        if (Number(net.chainId) !== EXPECTED_CHAIN_ID) {
+          setStage(STAGE.NEED_SWITCH);
+          setMain("Switch Network", false, false);
+          setStatus(`Wrong network: chainId=${net.chainId}. Click Switch Network (29).`, "err");
+          showReset(true);
+          return;
+        }
+
+        faucet = new ethers.Contract(faucetAddr, ABI, signer);
+        initialFaucetBal = null;
+
+        await refreshChainStats();
+        if (statsTimer) clearInterval(statsTimer);
+        statsTimer = setInterval(() => refreshChainStats().catch(()=>{}), 4000);
+
+        const [paused, claimed, qCount] = await Promise.all([
+          faucet.paused(),
+          faucet.hasClaimed(account),
+          faucet.questionCount()
+        ]);
+
+        showReset(true);
+
+        if (paused) {
+          setStatus("Faucet paused.", "err");
+          setMain("Paused", true, false);
+          return;
+        }
+        if (claimed) {
+          setStage(STAGE.CLAIMED);
+          setStatus("Already claimed once for this address.", "ok");
+          return;
+        }
+
+        totalQ = Number(qCount);
+        answers = new Array(totalQ).fill(null);
+
+        await loadQuestion(0);
+        powMeta.textContent = `chainId=${EXPECTED_CHAIN_ID}`;
+        powInfo.textContent = "Awaiting quiz completion…";
+        powFill.style.width = "0%";
+
+        setStage(STAGE.QUIZ);
+        setStatus("Connected: " + label + ". Complete quiz.", "ok");
+
+        eip1193.on?.("accountsChanged", () => setStatus("Account changed — refresh page", "err"));
+        eip1193.on?.("chainChanged", () => setStatus("Chain changed — refresh page", "err"));
+
+      }catch(e){
+        setStage(STAGE.DISCONNECTED);
+        setStatus("CONNECT_FAIL: " + (e?.message || String(e)), "err");
+      }
+    }
+
+    async function switchNetwork(){
+      if (!eip1193) return setStatus("No provider. Connect first.", "err");
+      setMain("SWITCHING…", true, true);
+      try{
+        await eip1193.request({ method: "wallet_switchEthereumChain", params: [{ chainId: EXPECTED_CHAIN_HEX }] });
+        const net = await provider.getNetwork();
+        if (Number(net.chainId) !== EXPECTED_CHAIN_ID) {
+          setMain("Switch Network", false, false);
+          setStatus("Still wrong network: chainId=" + net.chainId, "err");
+          return;
+        }
+
+        const [paused, claimed, qCount] = await Promise.all([
+          faucet.paused(),
+          faucet.hasClaimed(account),
+          faucet.questionCount()
+        ]);
+
+        if (paused) {
+          setStatus("Faucet paused.", "err");
+          setMain("Paused", true, false);
+          return;
+        }
+        if (claimed) {
+          setStage(STAGE.CLAIMED);
+          setStatus("Already claimed once for this address.", "ok");
+          return;
+        }
+
+        totalQ = Number(qCount);
+        answers = new Array(totalQ).fill(null);
+        await loadQuestion(0);
+
+        setStage(STAGE.QUIZ);
+        setStatus("Network switched. Continue quiz.", "ok");
+      }catch(e){
+        setMain("Switch Network", false, false);
+        setStatus("SWITCH_FAIL: " + (e?.message || String(e)), "err");
+      }
+    }
+
+    async function submitAnswer(){
+      if (selected === null) return setStatus("Select an option.", "err");
+      setMain("VERIFYING…", true, true);
+      try{
+        const ok = await faucet.checkAnswer(curQ, selected);
+        if (!ok) {
+          setMain("Submit Answer", false, false);
+          setStatus("Wrong answer. Try again.", "err");
+          return;
+        }
+        answers[curQ] = selected;
+
+        if (curQ + 1 < totalQ) {
+          await loadQuestion(curQ + 1);
+          setMain("Submit Answer", false, false);
+          setStatus("Correct. Next question.", "ok");
+          return;
+        }
+
+        showQuiz(false);
+        showPow(true);
+        setStage(STAGE.POW_READY);
+        setStatus("Quiz complete. Compute PoW captcha.", "ok");
+        powInfo.textContent = "Click to compute PoW captcha…";
+        powFill.style.width = "0%";
+      }catch(e){
+        setMain("Submit Answer", false, false);
+        setStatus("QUIZ_ERR: " + (e?.message || String(e)), "err");
+      }
+    }
+
+    async function computePoW(){
+      setStage(STAGE.POW_MINING);
+      setStatus("Mining PoW in browser…", "ok");
+      powResult = null;
+      powPulse = 0;
+      powFill.style.width = "0%";
+
+      try{
+        const ch = await pickFreshChallenge();
+        powMeta.textContent = `diff=${ch.diffBits} // block=${ch.challengeBlock}`;
+        powInfo.textContent = `Mining…\nchallengeBlock=${ch.challengeBlock}\ndifficultyBits=${ch.diffBits}\nmaxAgeBlocks=${ch.maxAge}`;
+
+        stopPow(true);
+        powWorker = makePowWorker();
+
+        powWorker.onmessage = (msg) => {
+          const d = msg.data;
+          if (d.progress) {
+            powPulse = (powPulse + 7) % 100;
+            powFill.style.width = powPulse + "%";
+            powInfo.textContent = `Mining…\ntries=${Number(d.tries).toLocaleString()}\nnonce≈${d.nonce}\nchallengeBlock=${ch.challengeBlock}`;
+            return;
+          }
+          if (d.found) {
+            powFill.style.width = "100%";
+            powResult = { ...ch, nonceStr: d.nonce };
+            powInfo.textContent = `PoW FOUND ✅\nnonce=${d.nonce}\ntries=${Number(d.tries).toLocaleString()}\nchallengeBlock=${ch.challengeBlock}`;
+            stopPow(false);
+            setStage(STAGE.READY_CLAIM);
+            setStatus("Captcha solved. Ready to dispense.", "ok");
+          }
+        };
+
+        const startNonce = Math.floor(Math.random()*1e9);
+        powWorker.postMessage({ challenge: ch.challenge, difficultyBits: ch.diffBits, startNonce });
+      }catch(e){
+        stopPow(true);
+        setStage(STAGE.POW_READY);
+        setStatus("POW_FAIL: " + (e?.message || String(e)), "err");
+        setMain("Compute PoW", false, false);
+      }
+    }
+
+    async function dispense(){
+      if (!powResult) return setStatus("Compute PoW first.", "err");
+
+      setStage(STAGE.DISPENSING);
+      setStatus("Running checks + sending tx…", "ok");
+
+      try{
+        const [block, claimed, paused, bal, amt, maxAge] = await Promise.all([
+          provider.getBlockNumber(),
+          faucet.hasClaimed(account),
+          faucet.paused(),
+          faucet.faucetBalance(),
+          faucet.claimAmountWei(),
+          faucet.maxChallengeAgeBlocks()
+        ]);
+
+        blockEl.textContent = String(block);
+        updateFaucetBalanceUI(bal);
+        claimEl.textContent = ethers.formatEther(amt) + " L1";
+
+        if (paused) throw new Error("PAUSED");
+        if (claimed) throw new Error("ALREADY_CLAIMED");
+        if (bal < amt) throw new Error("FAUCET_EMPTY");
+
+        const quizOk = await faucet.validateAll(answers);
+        if (!quizOk) throw new Error("QUIZ_INVALID");
+
+        const age = block - powResult.challengeBlock;
+        if (age <= 0) throw new Error("CHALLENGE_NOT_READY");
+        if (age > Number(maxAge) || age > 255) throw new Error("CAPTCHA_EXPIRED");
+
+        const powOk = await faucet.isValidPoW(account, powResult.challengeBlock, BigInt(powResult.nonceStr));
+        if (!powOk) throw new Error("POW_INVALID");
+
+        const txReq = await faucet.claim.populateTransaction(
+          answers,
+          powResult.challengeBlock,
+          BigInt(powResult.nonceStr)
+        );
+        txReq.from = account;
+        await provider.call(txReq);
+
+        startPourFX();
+
+        const tx = await faucet.claim(
+          answers,
+          powResult.challengeBlock,
+          BigInt(powResult.nonceStr),
+          { gasLimit: CLAIM_GAS_LIMIT }
+        );
+
+        setStatus("TX_SENT: " + tx.hash + "\nAwaiting confirmation…", "ok");
+        await tx.wait();
+
+        stopPourFX();
+        await refreshChainStats();
+
+        setStage(STAGE.CLAIMED);
+        setStatus("SUCCESS: 11 L1 dispensed.", "ok");
+      }catch(e){
+        stopPourFX();
+        setStage(STAGE.READY_CLAIM);
+        setStatus("DISPENSE_FAIL: " + (e?.message || String(e)), "err");
+        setMain("Execute Dispense", false, false);
+      }
+    }
+
+    function resetUI(){
+      stopPourFX();
+      stopPow(true);
+      powResult = null;
+      powFill.style.width = "0%";
+      powInfo.textContent = "—";
+      powMeta.textContent = "—";
+      selected = null;
+
+      if (!faucet || !account) return setStage(STAGE.DISCONNECTED);
+
+      faucet.hasClaimed(account).then(async (claimed) => {
+        if (claimed) {
+          setStage(STAGE.CLAIMED);
+          setStatus("Already claimed once for this address.", "ok");
+          return;
+        }
+        answers = new Array(totalQ).fill(null);
+        showQuiz(true);
+        showPow(false);
+        await loadQuestion(0);
+        setStage(STAGE.QUIZ);
+        setStatus("Reset. Quiz restarted.", "ok");
+      }).catch(() => setStage(STAGE.DISCONNECTED));
+    }
+
+    // ===================== Router =====================
+    mainBtn.onclick = async () => {
+      if (stage === STAGE.DISCONNECTED) return showWalletChooserAndConnect();
+      if (stage === STAGE.NEED_SWITCH)  return switchNetwork();
+      if (stage === STAGE.QUIZ)         return submitAnswer();
+      if (stage === STAGE.POW_READY)    return computePoW();
+      if (stage === STAGE.READY_CLAIM)  return dispense();
+    };
+    resetBtn.onclick = resetUI;
+
+    // ✅ NEW: Add chain button handler (uses modal if multiple wallets exist)
+    addChainBtn.onclick = async () => {
+      const entries = buildWalletPickerEntries();
+      if (!entries.length) return setStatus("NO_EVM_WALLET: Install MetaMask or Rabby.", "err");
+      if (entries.length === 1) return addChainWithProvider(entries[0].provider, entries[0].label);
+      return showWalletChooserAndAddChain();
+    };
+
+    // Init
+    netidEl.textContent = String(EXPECTED_CHAIN_ID);
+    setStage(STAGE.DISCONNECTED); // auto-loads block/balance/claim via rpc.genesisl1.org
+  })();
+  </script>
+
+  <script>
+    (function(){
+      const openA = document.getElementById("openLicense");
+      const det = document.getElementById("mitLicenseDetails");
+      if (openA && det) {
+        openA.addEventListener("click", (e) => {
+          e.preventDefault();
+          det.open = true;
+          det.scrollIntoView({ behavior: "smooth", block: "end" });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
+
